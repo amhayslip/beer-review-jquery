@@ -6,17 +6,26 @@ $(document).on('ready', function() {
 	// array of all beer in app
 	var beers = [];
 
+	// the current beer being viewed
+	var currentBeer = null;
+
 	var Beer = function (name, user) {
 		this.name = name;
 		this.user = user;
 		this.id = generateID();
+		this.reviews = [];
+	}
+
+	var Review = function (notes, user) {
+		this.notes = notes;
+		this.user = user;
 	}
 
 	generateID = function () {
 		return baseID += 1;
 	}
 
-	var postBeer = function() {
+	var postBeer = function () {
 		var beerName = $('.beer-input').val();
 		var userName = $('.user-input').val();
 
@@ -35,6 +44,40 @@ $(document).on('ready', function() {
 		}
 	};
 
+	var postReview = function () {
+		var notes = $('.notes-input').val();
+		var userName = $('.user-review-input').val();
+
+		var review = new Review(notes, userName);
+
+		currentBeer.reviews.push(review);
+
+
+		if (notes && userName) {
+			$('.reviews-container').append(
+				'<p class="review"><span>' + review.notes + '</span> - <span class="user-post">'+ review.user +'</span> </p>'
+			)
+			$('.notes-input').val('');
+			$('.user-review-input').val('');
+		}
+	};
+
+	var populateReviews = function () {
+		for (i = 0; i < currentBeer.reviews.length; i += 1) {
+			$('.reviews-container').append(
+				'<p class="review"><span>' + currentBeer.reviews[i].notes + '</span> - <span class="user-post">'+ currentBeer.reviews[i].user +'</span> </p>'
+			)
+		}
+	};
+
+	var findBeerByID = function (beerID) {
+		for (var i = 0; i < beers.length; i += 1) {
+			if (beers[i].id === beerID) {
+				return beers[i];
+			}
+		}
+	};
+
 	var viewReviews = function(beerID) {
 		$('.beers').removeClass('show');
 		$('.beer-form').removeClass('show');
@@ -42,11 +85,13 @@ $(document).on('ready', function() {
 		$('.reviews').addClass('show');
 		$('.review-form').addClass('show');
 
-		for (var i = 0; i < beers.length; i += 1) {
-			if (beers[i].id === beerID) {
-				$('.current-beer').html('for ' + beers[i].name);
-			}
-		}
+		currentBeer = findBeerByID(beerID);
+
+		$('.reviews-container').html('');
+
+		populateReviews();
+	
+		$('.current-beer').html('for ' + currentBeer.name);
 	};
 
 	var viewBeers = function() {
@@ -66,9 +111,14 @@ $(document).on('ready', function() {
 		});
 	}
 
-	$('.post').on('click', function (e) {
+	$('.post-beer').on('click', function (e) {
 		e.preventDefault();
 		postBeer();
+	});
+
+	$('.post-review').on('click', function (e) {
+		e.preventDefault();
+		postReview();
 	});
 
 	$('.back').on('click', function (e) {
