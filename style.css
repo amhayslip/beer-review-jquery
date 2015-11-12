@@ -1,0 +1,19 @@
+form {
+	margin-top: 30px;
+}
+
+.user-post {
+	font-weight: bold;
+}
+
+section {
+	display: none;
+}
+
+form {
+	display: none;
+}
+
+.show {
+	display: block;
+}
