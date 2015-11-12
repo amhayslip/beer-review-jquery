@@ -1,19 +1,19 @@
 form {
-	margin-top: 30px;
+  margin-top: 30px;
 }
 
 .user-post, .user-review {
-	font-weight: bold;
+  font-weight: bold;
 }
 
 section {
-	display: none;
+  display: none;
 }
 
 form {
-	display: none;
+  display: none;
 }
 
 .show {
-	display: block;
+  display: block;
 }
