@@ -38,10 +38,13 @@ $(document).on('ready', function() {
 
     // require both fields
     if (beerName && userName) {
-      $('.beers').append(
-        '<p class="beer" data-id=' + beer.id + '><span>' + beer.name + '</span> - <span class="user-post">'+ beer.user +'</span> <a href="#" class="view-reviews">Reviews</a> </p>'
-      );  
 
+      // compile our handlebars template
+      var source = $('#beer-template').html();
+      var template = Handlebars.compile(source);
+
+      $('.beers').append(template(beer));
+   
       // clear input fields after submit
       $('.beer-input').val('');
       $('.user-input').val('');
@@ -63,9 +66,10 @@ $(document).on('ready', function() {
 
     // require both fields
     if (notes && userName) {
-      $('.reviews-container').append(
-        '<p class="review"><span>' + review.notes + '</span> - <span class="user-post">'+ review.user +'</span> </p>'
-      )
+
+      var source = $('#review-template').html();
+      var template = Handlebars.compile(source);
+      $('.reviews-container').append(template(review));
 
       // clear inputs after submit
       $('.notes-input').val('');
@@ -76,9 +80,10 @@ $(document).on('ready', function() {
   // populate DOM with the current beer's reviews
   var populateReviews = function () {
     for (i = 0; i < currentBeer.reviews.length; i += 1) {
-      $('.reviews-container').append(
-        '<p class="review"><span>' + currentBeer.reviews[i].notes + '</span> - <span class="user-post">'+ currentBeer.reviews[i].user +'</span> </p>'
-      )
+      var source = $('#review-template').html();
+      var template = Handlebars.compile(source);
+
+      $('.reviews-container').append(template(currentBeer.reviews[i]));
     }
   };
 
@@ -123,7 +128,7 @@ $(document).on('ready', function() {
   var bindEvents = function () {
     $('.view-reviews').on('click', function (e) {
       e.preventDefault();
-      var beer = $(this).closest('.beer').data('id')
+      var beer = $(this).closest('.beer').data('id');
       viewReviews(beer);
     });
   };
