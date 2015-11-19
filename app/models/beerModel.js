@@ -10,10 +10,5 @@ module.exports = Backbone.Model.extend({
   user: '',
 
   // a collection of beer reviews
-  reviews: new BeerCollection(),
-
-  initialize: function (name, user) {
-    this.set('name', name);
-    this.set('user', user);
-  }
+  reviews: null
 });

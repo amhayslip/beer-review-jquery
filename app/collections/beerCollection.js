@@ -1,8 +1,4 @@
-var Backbone = require('backbone');
+var Backbone = require('Backbone');
 var BeerModel = require('./../models/beerModel');
 
-module.exports = Backbone.Collection.extend({
-
-  model: BeerModel
-
-});
+module.exports = Backbone.Collection.extend({});
