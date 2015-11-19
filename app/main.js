@@ -1,5 +1,19 @@
 var Backbone = require('Backbone');
+var BeerModel = require('./models/beerModel');
+var ReviewModel = require('./models/reviewModel');
 
+var AppView = require('./views/appView');
+var BeerView = require('./views/beerView');
+var ReviewView = require('./views/reviewView');
+
+var beerModel = new BeerModel('Goldstar', 'Aaron');
+
+var beerView = new BeerView({ model: beerModel});
+var reviewView = new ReviewView();
+
+var appView = new AppView({$el: $('.beers')});
+
+appView.render();
 
 $(document).on('ready', function() {
   // starting point for generating IDs
