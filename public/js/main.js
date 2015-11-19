@@ -21,160 +21,164 @@ var beerModel = new BeerModel('Goldstar', 'Aaron');
 var beerView = new BeerView({ model: beerModel});
 var reviewView = new ReviewView();
 
-var appView = new AppView({$el: $('.beers')});
+// var appView = new AppView();
 
-appView.render();
+var beerModel = new BeerModel("Goldstar", "Aaron");
+var beerView = new BeerView({ model: beerModel });
 
-$(document).on('ready', function() {
-  // starting point for generating IDs
-  var baseID = 0;
+beerView.render();
 
-  // array of all beer in app
-  var beers = [];
 
-  // the current beer being viewed
-  var currentBeer = null;
+// $(document).on('ready', function() {
+//   // starting point for generating IDs
+//   var baseID = 0;
 
-  // // beer constructor
-  var Beer = function (name, user) {
-    this.name = name;
-    this.user = user;
-    this.id = generateID();
-    this.reviews = [];
-  }
+//   // array of all beer in app
+//   var beers = [];
 
-  // review constructor
-  var Review = function (notes, user) {
-    this.notes = notes;
-    this.user = user;
-  }
+//   // the current beer being viewed
+//   var currentBeer = null;
 
-  generateID = function () {
-    return baseID += 1;
-  }
+//   // // beer constructor
+//   var Beer = function (name, user) {
+//     this.name = name;
+//     this.user = user;
+//     this.id = generateID();
+//     this.reviews = [];
+//   }
 
-  var postBeer = function () {
-    var beerName = $('.beer-input').val();
-    var userName = $('.user-input').val();
+//   // review constructor
+//   var Review = function (notes, user) {
+//     this.notes = notes;
+//     this.user = user;
+//   }
 
-    // create new beer
-    var beer = new Beer(beerName, userName);
+//   generateID = function () {
+//     return baseID += 1;
+//   }
 
-    // push to beers array
-    beers.push(beer);
+//   var postBeer = function () {
+//     var beerName = $('.beer-input').val();
+//     var userName = $('.user-input').val();
 
-    // require both fields
-    if (beerName && userName) {
+//     // create new beer
+//     var beer = new Beer(beerName, userName);
 
-      // compile our handlebars template
-      var source = $('#beer-template').html();
-      var template = Handlebars.compile(source);
+//     // push to beers array
+//     beers.push(beer);
 
-      $('.beers').append(template(beer));
+//     // require both fields
+//     if (beerName && userName) {
+
+//       // compile our handlebars template
+//       var source = $('#beer-template').html();
+//       var template = Handlebars.compile(source);
+
+//       $('.beers').append(template(beer));
    
-      // clear input fields after submit
-      $('.beer-input').val('');
-      $('.user-input').val('');
+//       // clear input fields after submit
+//       $('.beer-input').val('');
+//       $('.user-input').val('');
 
-      // binding 'view-reviews' after post because the element doesn't exist until this point
-      bindEvents();
-    }
-  };
+//       // binding 'view-reviews' after post because the element doesn't exist until this point
+//       bindEvents();
+//     }
+//   };
 
-  var postReview = function () {
-    var notes = $('.notes-input').val();
-    var userName = $('.user-review-input').val();
+//   var postReview = function () {
+//     var notes = $('.notes-input').val();
+//     var userName = $('.user-review-input').val();
 
-    // create new review
-    var review = new Review(notes, userName);
+//     // create new review
+//     var review = new Review(notes, userName);
 
-    // add review to current beers reviews array
-    currentBeer.reviews.push(review);
+//     // add review to current beers reviews array
+//     currentBeer.reviews.push(review);
 
-    // require both fields
-    if (notes && userName) {
+//     // require both fields
+//     if (notes && userName) {
 
-      var source = $('#review-template').html();
-      var template = Handlebars.compile(source);
-      $('.reviews-container').append(template(review));
+//       var source = $('#review-template').html();
+//       var template = Handlebars.compile(source);
+//       $('.reviews-container').append(template(review));
 
-      // clear inputs after submit
-      $('.notes-input').val('');
-      $('.user-review-input').val('');
-    }
-  };
+//       // clear inputs after submit
+//       $('.notes-input').val('');
+//       $('.user-review-input').val('');
+//     }
+//   };
 
-  // populate DOM with the current beer's reviews
-  var populateReviews = function () {
-    for (i = 0; i < currentBeer.reviews.length; i += 1) {
-      var source = $('#review-template').html();
-      var template = Handlebars.compile(source);
+//   // populate DOM with the current beer's reviews
+//   var populateReviews = function () {
+//     for (i = 0; i < currentBeer.reviews.length; i += 1) {
+//       var source = $('#review-template').html();
+//       var template = Handlebars.compile(source);
 
-      $('.reviews-container').append(template(currentBeer.reviews[i]));
-    }
-  };
+//       $('.reviews-container').append(template(currentBeer.reviews[i]));
+//     }
+//   };
 
-  // helper method
-  var findBeerByID = function (beerID) {
-    for (var i = 0; i < beers.length; i += 1) {
-      if (beers[i].id === beerID) {
-        return beers[i];
-      }
-    }
-  };
+//   // helper method
+//   var findBeerByID = function (beerID) {
+//     for (var i = 0; i < beers.length; i += 1) {
+//       if (beers[i].id === beerID) {
+//         return beers[i];
+//       }
+//     }
+//   };
 
-  var viewReviews = function(beerID) {
-    $('.beers').removeClass('show');
-    $('.beer-form').removeClass('show');
+//   var viewReviews = function(beerID) {
+//     $('.beers').removeClass('show');
+//     $('.beer-form').removeClass('show');
 
-    $('.reviews').addClass('show');
-    $('.review-form').addClass('show');
+//     $('.reviews').addClass('show');
+//     $('.review-form').addClass('show');
 
-    // set current beer to the clicked beer
-    currentBeer = findBeerByID(beerID);
+//     // set current beer to the clicked beer
+//     currentBeer = findBeerByID(beerID);
 
-    // remove current reviews
-    $('.reviews-container').html('');
+//     // remove current reviews
+//     $('.reviews-container').html('');
 
-    // populate with new reviews
-    populateReviews();
+//     // populate with new reviews
+//     populateReviews();
   
-    // add beer title to reviews heading
-    $('.current-beer').html('for ' + currentBeer.name);
-  };
+//     // add beer title to reviews heading
+//     $('.current-beer').html('for ' + currentBeer.name);
+//   };
 
-  var viewBeers = function() {
-    $('.beers').addClass('show');
-    $('.beer-form').addClass('show');
+//   var viewBeers = function() {
+//     $('.beers').addClass('show');
+//     $('.beer-form').addClass('show');
 
-    $('.reviews').removeClass('show');
-    $('.review-form').removeClass('show');
-  };
+//     $('.reviews').removeClass('show');
+//     $('.review-form').removeClass('show');
+//   };
 
-  // Events
-  var bindEvents = function () {
-    $('.view-reviews').on('click', function (e) {
-      e.preventDefault();
-      var beer = $(this).closest('.beer').data('id');
-      viewReviews(beer);
-    });
-  };
+//   // Events
+//   var bindEvents = function () {
+//     $('.view-reviews').on('click', function (e) {
+//       e.preventDefault();
+//       var beer = $(this).closest('.beer').data('id');
+//       viewReviews(beer);
+//     });
+//   };
 
-  $('.post-beer').on('click', function (e) {
-    e.preventDefault();
-    postBeer();
-  });
+//   $('.post-beer').on('click', function (e) {
+//     e.preventDefault();
+//     postBeer();
+//   });
 
-  $('.post-review').on('click', function (e) {
-    e.preventDefault();
-    postReview();
-  });
+//   $('.post-review').on('click', function (e) {
+//     e.preventDefault();
+//     postReview();
+//   });
 
-  $('.back').on('click', function (e) {
-    e.preventDefault();
-    viewBeers();
-  });
-});
+//   $('.back').on('click', function (e) {
+//     e.preventDefault();
+//     viewBeers();
+//   });
+// });
 
 },{"./models/beerModel":3,"./models/reviewModel":4,"./views/appView":6,"./views/beerView":7,"./views/reviewView":8,"Backbone":9}],3:[function(require,module,exports){
 var Backbone = require('backbone');
@@ -216,7 +220,15 @@ module.exports = Backbone.Model.extend({
 // hbsfy compiled Handlebars template
 var HandlebarsCompiler = require('hbsfy/runtime');
 module.exports = HandlebarsCompiler.template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
-    return "<div class=\"beer\"></div>";
+    var helper, alias1=depth0 != null ? depth0 : {}, alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
+
+  return "<p class=\"beer\" data-id=\""
+    + alias4(((helper = (helper = helpers.cid || (depth0 != null ? depth0.cid : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"cid","hash":{},"data":data}) : helper)))
+    + "\">\n  <span> "
+    + alias4(((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"name","hash":{},"data":data}) : helper)))
+    + "</span> - <span class=\"user-post\">"
+    + alias4(((helper = (helper = helpers.user || (depth0 != null ? depth0.user : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"user","hash":{},"data":data}) : helper)))
+    + "</span>\n  <a href=\"#\" class=\"view-reviews\">Reviews</a>\n</p>";
 },"useData":true});
 
 },{"hbsfy/runtime":32}],6:[function(require,module,exports){
@@ -226,6 +238,8 @@ var beerTemplate = require('./../templates/beer.hbs');
 console.log(beerTemplate);
 
 module.exports = Backbone.View.extend({
+  el: $('body'),
+
   initialize: function () {},
 
   render: function () {
@@ -234,13 +248,27 @@ module.exports = Backbone.View.extend({
 });
 },{"./../templates/beer.hbs":5,"backbone":11}],7:[function(require,module,exports){
 var Backbone = require('backbone');
+var beerTemplate = require('./../templates/beer.hbs');
+
+module.exports = Backbone.View.extend({
+  el: $('.beers'),
+
+  initialize: function () {
+    // body...
+  },
+
+  render: function () {
+    $(this.el).append(beerTemplate(this.model.toJSON()))
+  }
+
+});
+},{"./../templates/beer.hbs":5,"backbone":11}],8:[function(require,module,exports){
+var Backbone = require('backbone');
 
 module.exports = Backbone.View.extend({
 
 });
-},{"backbone":11}],8:[function(require,module,exports){
-arguments[4][7][0].apply(exports,arguments)
-},{"backbone":11,"dup":7}],9:[function(require,module,exports){
+},{"backbone":11}],9:[function(require,module,exports){
 (function (global){
 //     Backbone.js 1.2.3
 
