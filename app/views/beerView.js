@@ -4,12 +4,14 @@ var beerTemplate = require('./../templates/beer.hbs');
 module.exports = Backbone.View.extend({
   el: $('.beers'),
 
+  template: beerTemplate,
+
   initialize: function () {
-    // body...
+
   },
 
   render: function () {
-    $(this.el).append(beerTemplate(this.model.toJSON()))
+    $(this.el).html(this.template(this.model.toJSON()))
   }
 
 });

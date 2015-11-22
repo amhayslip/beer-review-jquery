@@ -3,14 +3,14 @@ var Backbone = require('Backbone');
 var BeerModel = require('./../models/beerModel');
 
 module.exports = Backbone.Collection.extend({});
-},{"./../models/beerModel":4,"Backbone":7}],2:[function(require,module,exports){
+},{"./../models/beerModel":4,"Backbone":9}],2:[function(require,module,exports){
 var Backbone = require('Backbone');
 var AppView = require('./views/appView');
 var AppModel = require('./models/appModel');
 
 var appModel = new AppModel(); 
 var appView = new AppView({ model: appModel });
-},{"./models/appModel":3,"./views/appView":6,"Backbone":7}],3:[function(require,module,exports){
+},{"./models/appModel":3,"./views/appView":7,"Backbone":9}],3:[function(require,module,exports){
 var Backbone = require('Backbone');
 var BeerCollection = require('./../collections/beerCollection');
 
@@ -29,42 +29,63 @@ module.exports = Backbone.Model.extend({
     this.set('all_beers', collection);
   }
 });
-},{"./../collections/beerCollection":1,"Backbone":7}],4:[function(require,module,exports){
+},{"./../collections/beerCollection":1,"Backbone":9}],4:[function(require,module,exports){
 var Backbone = require('backbone');
 var BeerCollection = require('./../collections/beerCollection');
 
 module.exports = Backbone.Model.extend({
 
   // name of the beer
-  name: '',
+  name: 'default name',
 
   // user associated with the beer
-  user: '',
+  user: 'default user',
 
   // a collection of beer reviews
   reviews: null
 });
-},{"./../collections/beerCollection":1,"backbone":9}],5:[function(require,module,exports){
+},{"./../collections/beerCollection":1,"backbone":11}],5:[function(require,module,exports){
 // hbsfy compiled Handlebars template
 var HandlebarsCompiler = require('hbsfy/runtime');
 module.exports = HandlebarsCompiler.template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
     return "<div class=\"row\">\n  <div class=\"col-md-6 col-md-offset-3\">\n    <div class=\"page-header\">\n      <h1>Beer Review</h1>\n    </div>\n\n    <section class=\"beers show\">\n      <h2>Beers</h2>\n    </section>\n\n    <section class=\"reviews\">\n      <a href=\"#\" class=\"back\">Back</a>\n      <h2>Reviews <span class=\"current-beer\"> </span></h2>\n      <div class=\"reviews-container\"></div>\n    </section>\n\n    <form class=\"beer-form show\">\n      <h3>Add a New Beer</h3>\n\n      <div class=\"form-group\">\n        <input type=\"text\"\n          class=\"beer-input form-control\"\n          placeholder=\"Beer Name\">\n        </input>\n      </div>\n      <div class=\"form-group\">\n        <input type=\"text\"\n          class=\"user-input form-control\"\n          placeholder=\"User\">\n        </input>\n      </div>\n      <button class=\"btn btn-primary post-beer\">Post</button>\n    </form>\n\n\n    <form class=\"review-form\">\n      <h3>Add a Review</h3>\n\n      <div class=\"form-group\">\n        <input type=\"text\"\n          class=\"notes-input form-control\"\n          placeholder=\"Notes\">\n        </input>\n      </div>\n      <div class=\"form-group\">\n        <input type=\"text\"\n          class=\"user-review-input form-control\"\n          placeholder=\"User\">\n        </input>\n      </div>\n      <button class=\"btn btn-primary post-review\">Post</button>\n    </form>\n\n  </div>\n</div>";
 },"useData":true});
 
-},{"hbsfy/runtime":30}],6:[function(require,module,exports){
+},{"hbsfy/runtime":32}],6:[function(require,module,exports){
+// hbsfy compiled Handlebars template
+var HandlebarsCompiler = require('hbsfy/runtime');
+module.exports = HandlebarsCompiler.template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+    var helper, alias1=depth0 != null ? depth0 : {}, alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
+
+  return "<p class=\"beer\" data-id=\""
+    + alias4(((helper = (helper = helpers.cid || (depth0 != null ? depth0.cid : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"cid","hash":{},"data":data}) : helper)))
+    + "\">\n  <span> "
+    + alias4(((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"name","hash":{},"data":data}) : helper)))
+    + "</span> - <span class=\"user-post\">"
+    + alias4(((helper = (helper = helpers.user || (depth0 != null ? depth0.user : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"user","hash":{},"data":data}) : helper)))
+    + "</span>\n  <a href=\"#\" class=\"view-reviews\">Reviews</a>\n</p>";
+},"useData":true});
+
+},{"hbsfy/runtime":32}],7:[function(require,module,exports){
 var Backbone = require('Backbone');
 var appTemplate = require('./../templates/app.hbs');
 var BeerModel = require('./../models/beerModel');
 
+var BeerView = require('./../views/beerView');
+
 module.exports = Backbone.View.extend({
-  el: $('body'),
+  el: $('.app-view'),
+
+  template: appTemplate,
+
+  subviews: [],
 
   events: {
     'click .post-beer': 'postBeer'
   },
 
   initialize: function () {
-    this.model.on('change:all_beers', this.render, this);
+    this.model.get('all_beers').on('add change remove', this.render, this);
 
     this.render();
   },
@@ -72,21 +93,52 @@ module.exports = Backbone.View.extend({
   postBeer: function (e) {
     e.preventDefault();
 
-    var name = this.$el.find('.beer-input').val();
-    var user = this.$el.find('.user-input').val();
+    var beerName = this.$el.find('.beer-input').val();
+    var beerUser = this.$el.find('.user-input').val();
 
-    this.$el.find('.beer-input').val('');
-    this.$el.find('.user-input').val('');
+    var newBeer = new BeerModel({ name: beerName, user: beerUser });
 
-    this.model.get('all_beers').add(
-      new BeerModel({ name: name, user: user}));
+    // this.$el.find('.beer-input').val('');
+    // this.$el.find('.user-input').val('');
+
+
+    this.model.get('all_beers').add(newBeer);
+
+    console.log(this.model.get('all_beers').models[0].get('name'));
+
+  },
+
+  assign : function (view, selector) {
+    view.setElement(this.$(selector)).render();
+  },
+
+  // render this view and any subviews
+  render: function () {
+    $(this.el).html(this.template(this.model.toJSON()));
+    // this.assign(this.subview, '.subview');
+
+    return this;
+  }
+});
+},{"./../models/beerModel":4,"./../templates/app.hbs":5,"./../views/beerView":8,"Backbone":9}],8:[function(require,module,exports){
+var Backbone = require('backbone');
+var beerTemplate = require('./../templates/beer.hbs');
+
+module.exports = Backbone.View.extend({
+  el: $('.beers'),
+
+  template: beerTemplate,
+
+  initialize: function () {
+
   },
 
   render: function () {
-    $(this.el).append(appTemplate(this.model.toJSON()));
+    $(this.el).html(this.template(this.model.toJSON()))
   }
+
 });
-},{"./../models/beerModel":4,"./../templates/app.hbs":5,"Backbone":7}],7:[function(require,module,exports){
+},{"./../templates/beer.hbs":6,"backbone":11}],9:[function(require,module,exports){
 (function (global){
 //     Backbone.js 1.2.3
 
@@ -1984,7 +2036,7 @@ module.exports = Backbone.View.extend({
 }));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"jquery":31,"underscore":8}],8:[function(require,module,exports){
+},{"jquery":33,"underscore":10}],10:[function(require,module,exports){
 //     Underscore.js 1.8.3
 //     http://underscorejs.org
 //     (c) 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
@@ -3534,11 +3586,11 @@ module.exports = Backbone.View.extend({
   }
 }.call(this));
 
-},{}],9:[function(require,module,exports){
-arguments[4][7][0].apply(exports,arguments)
-},{"dup":7,"jquery":31,"underscore":10}],10:[function(require,module,exports){
-arguments[4][8][0].apply(exports,arguments)
-},{"dup":8}],11:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
+arguments[4][9][0].apply(exports,arguments)
+},{"dup":9,"jquery":33,"underscore":12}],12:[function(require,module,exports){
+arguments[4][10][0].apply(exports,arguments)
+},{"dup":10}],13:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -3607,7 +3659,7 @@ exports['default'] = inst;
 module.exports = exports['default'];
 
 
-},{"./handlebars/base":12,"./handlebars/exception":15,"./handlebars/no-conflict":25,"./handlebars/runtime":26,"./handlebars/safe-string":27,"./handlebars/utils":28}],12:[function(require,module,exports){
+},{"./handlebars/base":14,"./handlebars/exception":17,"./handlebars/no-conflict":27,"./handlebars/runtime":28,"./handlebars/safe-string":29,"./handlebars/utils":30}],14:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -3713,7 +3765,7 @@ exports.createFrame = _utils.createFrame;
 exports.logger = _logger2['default'];
 
 
-},{"./decorators":13,"./exception":15,"./helpers":16,"./logger":24,"./utils":28}],13:[function(require,module,exports){
+},{"./decorators":15,"./exception":17,"./helpers":18,"./logger":26,"./utils":30}],15:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -3731,7 +3783,7 @@ function registerDefaultDecorators(instance) {
 }
 
 
-},{"./decorators/inline":14}],14:[function(require,module,exports){
+},{"./decorators/inline":16}],16:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -3762,7 +3814,7 @@ exports['default'] = function (instance) {
 module.exports = exports['default'];
 
 
-},{"../utils":28}],15:[function(require,module,exports){
+},{"../utils":30}],17:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -3804,7 +3856,7 @@ exports['default'] = Exception;
 module.exports = exports['default'];
 
 
-},{}],16:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -3852,7 +3904,7 @@ function registerDefaultHelpers(instance) {
 }
 
 
-},{"./helpers/block-helper-missing":17,"./helpers/each":18,"./helpers/helper-missing":19,"./helpers/if":20,"./helpers/log":21,"./helpers/lookup":22,"./helpers/with":23}],17:[function(require,module,exports){
+},{"./helpers/block-helper-missing":19,"./helpers/each":20,"./helpers/helper-missing":21,"./helpers/if":22,"./helpers/log":23,"./helpers/lookup":24,"./helpers/with":25}],19:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -3893,7 +3945,7 @@ exports['default'] = function (instance) {
 module.exports = exports['default'];
 
 
-},{"../utils":28}],18:[function(require,module,exports){
+},{"../utils":30}],20:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -3989,7 +4041,7 @@ exports['default'] = function (instance) {
 module.exports = exports['default'];
 
 
-},{"../exception":15,"../utils":28}],19:[function(require,module,exports){
+},{"../exception":17,"../utils":30}],21:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -4016,7 +4068,7 @@ exports['default'] = function (instance) {
 module.exports = exports['default'];
 
 
-},{"../exception":15}],20:[function(require,module,exports){
+},{"../exception":17}],22:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -4047,7 +4099,7 @@ exports['default'] = function (instance) {
 module.exports = exports['default'];
 
 
-},{"../utils":28}],21:[function(require,module,exports){
+},{"../utils":30}],23:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -4075,7 +4127,7 @@ exports['default'] = function (instance) {
 module.exports = exports['default'];
 
 
-},{}],22:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -4089,7 +4141,7 @@ exports['default'] = function (instance) {
 module.exports = exports['default'];
 
 
-},{}],23:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -4124,7 +4176,7 @@ exports['default'] = function (instance) {
 module.exports = exports['default'];
 
 
-},{"../utils":28}],24:[function(require,module,exports){
+},{"../utils":30}],26:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -4173,7 +4225,7 @@ exports['default'] = logger;
 module.exports = exports['default'];
 
 
-},{"./utils":28}],25:[function(require,module,exports){
+},{"./utils":30}],27:[function(require,module,exports){
 (function (global){
 /* global window */
 'use strict';
@@ -4196,7 +4248,7 @@ module.exports = exports['default'];
 
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],26:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -4490,7 +4542,7 @@ function executeDecorators(fn, prog, container, depths, data, blockParams) {
 }
 
 
-},{"./base":12,"./exception":15,"./utils":28}],27:[function(require,module,exports){
+},{"./base":14,"./exception":17,"./utils":30}],29:[function(require,module,exports){
 // Build out our basic SafeString type
 'use strict';
 
@@ -4507,7 +4559,7 @@ exports['default'] = SafeString;
 module.exports = exports['default'];
 
 
-},{}],28:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -4633,15 +4685,15 @@ function appendContextPath(contextPath, id) {
 }
 
 
-},{}],29:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 // Create a simple path alias to allow browserify to resolve
 // the runtime on a supported path.
 module.exports = require('./dist/cjs/handlebars.runtime')['default'];
 
-},{"./dist/cjs/handlebars.runtime":11}],30:[function(require,module,exports){
+},{"./dist/cjs/handlebars.runtime":13}],32:[function(require,module,exports){
 module.exports = require("handlebars/runtime")["default"];
 
-},{"handlebars/runtime":29}],31:[function(require,module,exports){
+},{"handlebars/runtime":31}],33:[function(require,module,exports){
 /*!
  * jQuery JavaScript Library v2.1.4
  * http://jquery.com/
