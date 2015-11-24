@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <script src="js/main.js"></script>
   <link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" type="text/css" href="./styles/style.css">
 </head>
-<body>
-
-  <script src="js/main.js"></script>
+<body ng-app="beerReview">
+  <div ng-controller="MainController">
+    {{hello}}
+  </div>
 </body>
 </html>
