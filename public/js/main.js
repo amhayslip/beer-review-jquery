@@ -21,8 +21,10 @@ var BeerCollection = require('./../collections/beerCollection');
 
 module.exports = Backbone.Model.extend({
   defaults: {
+    // beer currently being viewed
     current_beer: null,
 
+    // a collection representing all beers in the app
     all_beers: new BeerCollection()
   }
 });
@@ -73,8 +75,6 @@ module.exports = Backbone.View.extend({
 
   template: appTemplate,
 
-  subviews: [],
-
   events: {
     'click .post-beer': 'postBeer'
   },
@@ -91,20 +91,17 @@ module.exports = Backbone.View.extend({
     var beerName = this.$el.find('.beer-input').val();
     var beerUser = this.$el.find('.user-input').val();
 
-    this.model.get('all_beers').add({
-      name: beerName,
-      user: beerUser
-    });
-  },
-
-  assign : function (view, selector) {
-    view.setElement(this.$(selector)).render();
+    if (beerName && beerUser) {
+      this.model.get('all_beers').add({
+        name: beerName,
+        user: beerUser
+      });
+    }
   },
 
   // render this view and any subviews
   render: function () {
     $(this.el).html(this.template(this.model.toJSON()));
-    // this.assign(this.subview, '.subview');
 
     this.model.get('all_beers').each(function (b) {
       new BeerView({ model: b, el: $('.beers') }).render();
@@ -123,7 +120,6 @@ module.exports = Backbone.View.extend({
   render: function () {
     $(this.el).append(this.template(this.model.toJSON()))
   }
-
 });
 },{"./../templates/beer.hbs":6,"backbone":11}],9:[function(require,module,exports){
 (function (global){
