@@ -2,11 +2,13 @@ var Backbone = require('backbone');
 
 module.exports = Backbone.Model.extend({
 
-  // notes on the beer
-  notes: '',
+  defaults: {
+    // notes on the beer
+    notes: '',
 
-  // user associated with the beer
-  user: '',
+    // user associated with the beer
+    user: '',
+  },
 
   initialize: function (notes, user) {
     this.set('name', name);

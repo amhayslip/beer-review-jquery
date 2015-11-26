@@ -1,4 +1,5 @@
 var Backbone = require('Backbone');
+var _ = require('lodash');
 var appTemplate = require('./../templates/app.hbs');
 var BeerModel = require('./../models/beerModel');
 
@@ -16,7 +17,7 @@ module.exports = Backbone.View.extend({
   },
 
   initialize: function () {
-    this.model.get('all_beers').on('add change remove', this.render, this);
+    this.listenTo(this.model.get('all_beers'), 'add', this.render);
 
     this.render();
   },
@@ -27,16 +28,10 @@ module.exports = Backbone.View.extend({
     var beerName = this.$el.find('.beer-input').val();
     var beerUser = this.$el.find('.user-input').val();
 
-    var newBeer = new BeerModel({ name: beerName, user: beerUser });
-
-    // this.$el.find('.beer-input').val('');
-    // this.$el.find('.user-input').val('');
-
-
-    this.model.get('all_beers').add(newBeer);
-
-    console.log(this.model.get('all_beers').models[0].get('name'));
-
+    this.model.get('all_beers').add({
+      name: beerName,
+      user: beerUser
+    });
   },
 
   assign : function (view, selector) {
@@ -47,6 +42,10 @@ module.exports = Backbone.View.extend({
   render: function () {
     $(this.el).html(this.template(this.model.toJSON()));
     // this.assign(this.subview, '.subview');
+
+    this.model.get('all_beers').each(function (b) {
+      new BeerView({ model: b, el: $('.beers') }).render();
+    }, this);
 
     return this;
   }

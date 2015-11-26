@@ -1,14 +1,11 @@
 var Backbone = require('backbone');
-var BeerCollection = require('./../collections/beerCollection');
 
 module.exports = Backbone.Model.extend({
+  defaults: {
+    // name of the beer
+    name: '',
 
-  // name of the beer
-  name: '',
-
-  // user associated with the beer
-  user: '',
-
-  // a collection of beer reviews
-  reviews: null
+    // user associated with the beer
+    user: ''
+  }
 });
