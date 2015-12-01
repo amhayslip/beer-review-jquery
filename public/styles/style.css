@@ -5,15 +5,3 @@ form {
 .user-post, .user-review {
   font-weight: bold;
 }
-
-section {
-  display: none;
-}
-
-form {
-  display: none;
-}
-
-.show {
-  display: block;
-}

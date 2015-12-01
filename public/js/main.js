@@ -57,7 +57,7 @@ module.exports = HandlebarsCompiler.template({"compiler":[7,">= 4.0.0"],"main":f
     + alias4(((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"name","hash":{},"data":data}) : helper)))
     + "</span> - <span class=\"user-post\">"
     + alias4(((helper = (helper = helpers.user || (depth0 != null ? depth0.user : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"user","hash":{},"data":data}) : helper)))
-    + "</span>\n  <a href=\"#\" class=\"view-reviews\">Reviews</a>\n</p>";
+    + "</span>\n</p>";
 },"useData":true});
 
 },{"hbsfy/runtime":32}],7:[function(require,module,exports){
@@ -69,17 +69,18 @@ var BeerModel = require('./../models/beerModel');
 var BeerView = require('./../views/beerView');
 
 module.exports = Backbone.View.extend({
-  el: $('.app-view'),
+  el: '.app-view',
 
   template: appTemplate,
-
-  subviews: [],
 
   events: {
     'click .post-beer': 'postBeer'
   },
 
   initialize: function () {
+    this.$beerInput = this.$('.beer-input');
+    this.$userInput = this.$('.user-input');
+
     this.listenTo(this.model.get('all_beers'), 'add', this.render);
 
     this.render();
@@ -88,29 +89,20 @@ module.exports = Backbone.View.extend({
   postBeer: function (e) {
     e.preventDefault();
 
-    var beerName = this.$el.find('.beer-input').val();
-    var beerUser = this.$el.find('.user-input').val();
-
     this.model.get('all_beers').add({
-      name: beerName,
-      user: beerUser
-    });
-  },
+      name: this.$beerInput.val(),
+      user: this.$userInput.val()
+    }, this);
 
-  assign : function (view, selector) {
-    view.setElement(this.$(selector)).render();
+    this.$beerInput.val('');
+    this.$userInput.val('');
   },
 
   // render this view and any subviews
   render: function () {
-    $(this.el).html(this.template(this.model.toJSON()));
-    // this.assign(this.subview, '.subview');
-
     this.model.get('all_beers').each(function (b) {
       new BeerView({ model: b, el: $('.beers') }).render();
     }, this);
-
-    return this;
   }
 });
 },{"./../models/beerModel":4,"./../templates/app.hbs":5,"./../views/beerView":8,"Backbone":9,"lodash":34}],8:[function(require,module,exports){
