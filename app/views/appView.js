@@ -17,6 +17,7 @@ module.exports = Backbone.View.extend({
   initialize: function () {
     this.$beerInput = this.$('.beer-input');
     this.$userInput = this.$('.user-input');
+    this.$beers = this.$('.beers');
 
     this.listenTo(this.model.get('all_beers'), 'add', this.render);
 
@@ -38,7 +39,7 @@ module.exports = Backbone.View.extend({
   // render this view and any subviews
   render: function () {
     this.model.get('all_beers').each(function (b) {
-      new BeerView({ model: b, el: $('.beers') }).render();
+      new BeerView({ model: b, el: this.$beers }).render();
     }, this);
   }
 });
