@@ -82,7 +82,7 @@ module.exports = Backbone.View.extend({
     this.$userInput = this.$('.user-input');
     this.$beers = this.$('.beers');
 
-    this.listenTo(this.model.get('all_beers'), 'add', this.render);
+    this.listenTo(this.model.get('all_beers'), 'add', this.renderBeer);
 
     this.render();
   },
@@ -90,20 +90,23 @@ module.exports = Backbone.View.extend({
   postBeer: function (e) {
     e.preventDefault();
 
-    this.model.get('all_beers').add({
-      name: this.$beerInput.val(),
-      user: this.$userInput.val()
-    }, this);
+    var beerName = this.$beerInput.val();
+    var userName = this.$userInput.val();
+
+    if (beerName && userName) {
+      this.model.get('all_beers').add({
+        name: beerName,
+        user: userName
+      }, this);
+    }
 
     this.$beerInput.val('');
     this.$userInput.val('');
   },
 
   // render this view and any subviews
-  render: function () {
-    this.model.get('all_beers').each(function (b) {
-      new BeerView({ model: b, el: this.$beers }).render();
-    }, this);
+  renderBeer: function (beer) {
+    new BeerView({ model: beer, el: this.$beers }).render();
   }
 });
 },{"./../models/beerModel":4,"./../templates/app.hbs":5,"./../views/beerView":8,"Backbone":9,"lodash":34}],8:[function(require,module,exports){
